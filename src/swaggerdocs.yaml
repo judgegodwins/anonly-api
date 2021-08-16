@@ -1,0 +1,156 @@
+---
+openapi: 3.0.0
+info:
+  title: Anonymous Messaging API
+  description: API for sending anonymous messages.
+
+servers:
+  - url: http://localhost:8080/
+    description: Server for development environment.
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        verified:
+          type: string
+      required:
+        - _id
+        - username
+        - roles
+      example:
+        _id: 690038348ad943902dc
+        username: awesomeuser
+        roles:
+          - USER
+    Message:
+      type: object
+      properties:
+        _id:
+          type: string
+        text:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - text
+      example:
+        _id: 690038348ad943902dc
+        text: Hi awesomeuser, you're so cool.
+        createdAt: '2021-08-13T13:11:12.683Z'
+
+    SuccessAuthResponse:
+      type: object
+      properties:
+          user:
+            $ref: '#/components/schemas/User'
+          token:
+            type: string
+            example: eyJhbGciOiJIUzI1NiIsIn...
+          tokenExpiresOn:
+            type: string
+            example: "2021-08-28T19:23:28.724Z"
+
+tags:
+  - name: Authentication
+    description: All routes concerning auth.
+  - name: Messages
+    description: Everything about messaging and messages
+  
+paths:
+
+  /auth/signup:
+    post:
+      summary: Creates a new user account and returns a token for authorization.
+      notes: tokenExpiresOn is an ISO date string. It indicates the date and time the JWT will expire.
+
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email: 
+                  type: string
+                password:
+                  type: string
+                  minimum: 6
+              required:
+                - username
+                  password
+      responses:
+        '200':
+          description: Signup was successful and auth token generated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created
+                  data:
+                    $ref: '#/components/schemas/SuccessAuthResponse'
+
+
+  /message/{username}:
+    post:
+      summary: Sends a message to a user.
+      tags:
+        - Messages
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username of user to receive the message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+              required:
+                - text
+              example:
+                text: Hi awesomeuser, you're so cool.
+      responses:
+        '200':
+          description: Message has been sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Message sent
+                  data:
+                    "$ref": "#/components/schemas/Message"
+        '404':
+          description: User with username does not exist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    example: User with username not found

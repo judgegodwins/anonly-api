@@ -1,0 +1,29 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/judge/codeprojects/anonymous-messaging/logs/.b9d8aa707ac953f3d665b841ceeabe16e2c03025-audit.json",
+    "files": [
+        {
+            "date": 1628757617610,
+            "name": "/home/judge/codeprojects/anonymous-messaging/logs/2021-08-12.log",
+            "hash": "b5e828017f18b82ce66d3dbc98a4dab5"
+        },
+        {
+            "date": 1628856249143,
+            "name": "/home/judge/codeprojects/anonymous-messaging/logs/2021-08-13.log",
+            "hash": "89cd2da025223ca12805bf7ef82522b5"
+        },
+        {
+            "date": 1628941571914,
+            "name": "/home/judge/codeprojects/anonymous-messaging/logs/2021-08-14.log",
+            "hash": "23914938cc0a88f6e7eb53a4b62afa29"
+        },
+        {
+            "date": 1629095618256,
+            "name": "/home/judge/codeprojects/anonymous-messaging/logs/2021-08-16.log",
+            "hash": "c8b64a3ab5e822004da8fa4bccd1eb41"
+        }
+    ]
+}

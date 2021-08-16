@@ -1,0 +1,1 @@
+{"version":3,"file":"schema.js","sourceRoot":"","sources":["../../../../src/routes/messaging/schema/schema.ts"],"names":[],"mappings":";;;;;AAAA,8CAAsB;AAEtB,kBAAe;IACb,MAAM,EAAE,aAAG,CAAC,MAAM,CAAC;QACjB,QAAQ,EAAE,aAAG,CAAC,MAAM,EAAE,CAAC,QAAQ,EAAE;KAClC,CAAC;IACF,IAAI,EAAE,aAAG,CAAC,MAAM,CAAC;QACf,IAAI,EAAE,aAAG,CAAC,MAAM,EAAE,CAAC,QAAQ,EAAE;KAC9B,CAAC;CACH,CAAA"}
