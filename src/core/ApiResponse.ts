@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { PaginationResult } from '../database/repository/BaseRepo';
+import { PaginationResult } from '../helpers/Pagination';
 
 enum StatusCode {
   SUCCESS = '10000',

@@ -22,5 +22,4 @@ export default class UserRepo {
       .exec()
   }
 
-
 }

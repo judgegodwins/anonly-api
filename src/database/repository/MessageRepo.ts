@@ -1,14 +1,14 @@
 import { ObjectId, Types } from "mongoose";
+import Pagination, { PaginationFunction } from "../../helpers/Pagination";
 import Message, { MessageModel } from '../models/Message';
 import User, { UserModel } from '../models/User';
-import BaseRepo, { PaginationFunction } from './BaseRepo';
 
 interface PaginationOptions {
   limit: number,
   page: number
 }
 
-export default class MessageRepo extends BaseRepo {
+export default class MessageRepo {
   public static async create(text: string, user: User) {
     const message = await MessageModel.create({ text, user: user._id });
 
@@ -23,11 +23,11 @@ export default class MessageRepo extends BaseRepo {
   /**
    * Finds the messages sent to a user
    */
-  public static findMessagesForUserWithId(id: ObjectId): {paginate: PaginationFunction} {
+  public static findMessagesForUserWithId(id: ObjectId): Pagination<Message> {
 
     const query = MessageModel.find({user: id})
 
     // const count = await MessageModel.countDocuments(query);
-    return MessageRepo.paginate<Message>(query);
+    return new Pagination<Message>(query);
   }
 }
