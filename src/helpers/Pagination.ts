@@ -28,16 +28,12 @@ export default class Pagination<T> {
     const startIndex = (page - 1) * limit;
     const endIndex = limit * page;
 
-    console.log('nums: ', startIndex, ' ', endIndex, ' ', limit, ' ', page);
-
     const docCount = await MessageModel.countDocuments(this.query);
 
     const result: PaginationResult = {} as PaginationResult;
 
-    console.log('count, pneces ', docCount, docCount / limit);
     result.pagesNecessary = Math.ceil(docCount / limit);
 
-    console.log('paginating...')
     result.data = await this.query.skip(startIndex).limit(limit).lean<T>();
 
     if (endIndex < docCount) {
