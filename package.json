@@ -10,8 +10,7 @@
     "build": "npm run clean && npm run build-ts",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
     "clean": "rimraf ./build",
-    "tsc": "tsc",
-    "build-ts": "npm run tsc",
+    "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "watch-node": " nodemon -r dotenv/config build/server.js",
     "test": "jest --detectOpenHandles"
