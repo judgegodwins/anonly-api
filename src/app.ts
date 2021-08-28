@@ -26,6 +26,9 @@ const options = {
       description: 'API for sending anonymous messages.',
       version: '1.0.0'
     },
+    servers: [
+      { url: "https://anonly.herokuapp.com/", description: 'Staging server' }
+    ]
   },
   apis: [path.join(__dirname, '/routes/**/*.js')]
 }
