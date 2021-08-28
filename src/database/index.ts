@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 
 const dbURI = `mongodb${dbConfig.dnsSrv ? '+srv' : ''}://${dbConfig.user}:${encodeURIComponent(dbConfig.password)}@${dbConfig.host}${dbConfig.port ? ':'+dbConfig.port : ''}/${dbConfig.name}${dbConfig.options}`;
 
+console.log('dbUri: ', dbURI);
+
 const options = {
   useNewUrlParser: true,
   useCreateIndex: true,
