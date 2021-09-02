@@ -38,6 +38,8 @@ describe('Login route', () => {
     expect(response.body.data.user).toHaveProperty('_id');
     expect(response.body.data.user).toHaveProperty('roles');
     expect(response.body.data.user).not.toHaveProperty('password');
+    expect(response.body.data).toHaveProperty('token');
+    expect(response.body.data).toHaveProperty('tokenExpiresOn');
   })
 
   it('Should send auth tokens and expiry date', async () => {
