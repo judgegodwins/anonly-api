@@ -87,7 +87,7 @@ const router = express.Router();
 
 router.post(
   '/:username',
-  validator(schema.body, ValidationSource.Body),
+  validator(schema.sendMessage.body, ValidationSource.Body),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
     const { text } = req.body;
@@ -142,6 +142,7 @@ router.post(
 router.get(
   '/view/user-messages',
   authentication,
+  validator(schema.viewMessages.query, ValidationSource.Query),
   asyncHandler(async (req: ProtectedRequest, res: Response) => {
     const result = await MessageRepo.findMessagesForUserWithId(req.user._id).paginate(req, res);
     new PaginationResponse(
