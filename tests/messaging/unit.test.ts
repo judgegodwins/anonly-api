@@ -88,4 +88,24 @@ describe('Messaging', () => {
       expect(response.body.data.length).toBeGreaterThan(0);
     })
   })
+
+  describe('Check user exists', () => {
+    const endpoint = '/message/check-user';
+    it('Should return success if user with username (in query) is found', async () => {
+      const response = await request.get(endpoint)
+        .query({ 'username': mockUser.username });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('success');
+      expect(response.body.success).toBeTruthy();
+    })
+
+    it('Should return with 404 error if user with username (in query) is not found', async () => {
+      const response = await request.get(endpoint)
+        .query({ 'username': 'unknown' });
+
+      expect(response.status).toBe(404);
+      expect(response.body.message).toMatch(/not found/);
+    })
+  })
 })

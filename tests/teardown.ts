@@ -20,5 +20,5 @@ async function dropAllCollections() {
 
 afterAll(async () => {
   await dropAllCollections();
-  mongoose.connection.close();
+  await mongoose.connection.close();
 })

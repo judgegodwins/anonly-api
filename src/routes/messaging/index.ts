@@ -110,9 +110,10 @@ router.get(
 
     const user = await UserRepo.findUserByUsername(req.query.username as string);
 
-    if (user) return new SuccessResponse('User found', null).send(res);
+    if (!user) throw new NotFoundError('User not found');
+    
+    return new SuccessResponse('User found', null).send(res);
 
-    return new NotFoundError('User not found');
   })
 )
 
