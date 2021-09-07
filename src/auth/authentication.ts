@@ -20,12 +20,17 @@ export default [
     const token = getAccessToken(req.headers.authorization);
 
     jwt.verify(token, jwtSecret as Secret, async (err, decoded: User) => {
-      if (err) next(err);
-      if (!decoded) throw new AuthFailureError('Invalid token');
+      if (err) {
+        if (err.message === 'jwt malformed')
+          next(new AuthFailureError('Malformed token'));
+        return next(err);
+      }
+      
+      if (!decoded) return next(new AuthFailureError('Invalid token'));
 
       const user = await UserRepo.findUserByUsername(decoded.username);
 
-      if (!user) throw new AuthFailureError('Invalid token');
+      if (!user) return next(new AuthFailureError('Invalid token'));
 
       req.user = decoded;
       
