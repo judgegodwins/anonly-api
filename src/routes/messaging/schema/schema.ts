@@ -14,5 +14,10 @@ export default {
       page: Joi.number().required(),
       limit: Joi.number().required()
     }).unknown(true)
+  },
+  findUser: {
+    query: Joi.object({
+      username: Joi.string().required()
+    }).unknown(true)
   }
 }
