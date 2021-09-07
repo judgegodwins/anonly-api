@@ -103,6 +103,19 @@ router.post(
   })
 );
 
+router.get(
+  '/check-user',
+  validator(schema.findUser.query, ValidationSource.Query),
+  asyncHandler(async (req: Request, res: Response) => {
+
+    const user = await UserRepo.findUserByUsername(req.query.username as string);
+
+    if (user) return new SuccessResponse('User found', null).send(res);
+
+    return new NotFoundError('User not found');
+  })
+)
+
 /**
  * @openapi
  * 
@@ -151,5 +164,6 @@ router.get(
     ).send(res);
   })
 )
+
 
 export default router;
