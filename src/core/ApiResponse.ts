@@ -19,7 +19,7 @@ enum ResponseStatus {
 
 abstract class ApiResponse {
   constructor(    
-    protected statusCode: StatusCode,
+    protected success: boolean,
     protected status: ResponseStatus,
     protected message: string
   ) {}
@@ -49,19 +49,19 @@ abstract class ApiResponse {
 
 export class SuccessMsgResponse extends ApiResponse {
   constructor(message: string) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message)
+    super(true, ResponseStatus.SUCCESS, message)
   }
 }
 
 export class FailureMsgResponse extends ApiResponse {
   constructor(message: string) {
-    super(StatusCode.FAILURE, ResponseStatus.SUCCESS, message);
+    super(false, ResponseStatus.SUCCESS, message);
   }
 }
 
 export class SuccessResponse<T> extends ApiResponse {
   constructor(message: string, private data: T) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message);
+    super(true, ResponseStatus.SUCCESS, message);
   }
 
   send(res: Response): Response {
@@ -77,7 +77,7 @@ export class PaginationResponse extends ApiResponse {
   private data: PaginationResult["data"];
 
   constructor(message: string, result: PaginationResult) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message);
+    super(true, ResponseStatus.SUCCESS, message);
     this.next = result.next;
     this.previous = result.previous;
     this.pagesNecessary = result.pagesNecessary;
@@ -89,7 +89,7 @@ export class NotFoundResponse extends ApiResponse {
   private url: string | undefined;
 
   constructor(message = 'Not Found') {
-    super(StatusCode.FAILURE, ResponseStatus.NOT_FOUND, message);
+    super(false, ResponseStatus.NOT_FOUND, message);
   }
 
   send(res: Response): Response {
@@ -100,25 +100,25 @@ export class NotFoundResponse extends ApiResponse {
 
 export class AuthFailureResponse extends ApiResponse {
   constructor(message = 'Authentication Failure') {
-    super(StatusCode.FAILURE, ResponseStatus.UNAUTHORIZED, message);
+    super(false, ResponseStatus.UNAUTHORIZED, message);
   }
 }
 
 export class ForbiddenResponse extends ApiResponse {
   constructor(message = 'Forbidden') {
-    super(StatusCode.FAILURE, ResponseStatus.FORBIDDEN, message);
+    super(false, ResponseStatus.FORBIDDEN, message);
   }
 }
 
 export class BadRequestResponse extends ApiResponse {
   constructor(message = 'Bad Parameters') {
-    super(StatusCode.FAILURE, ResponseStatus.BAD_REQUEST, message);
+    super(false, ResponseStatus.BAD_REQUEST, message);
   }
 }
 
 export class InternalErrorResponse extends ApiResponse {
   constructor(message = 'Internal Error') {
-    super(StatusCode.FAILURE, ResponseStatus.INTERNAL_ERROR, message);
+    super(false, ResponseStatus.INTERNAL_ERROR, message);
   }
 }
 
@@ -126,7 +126,7 @@ export class AccessTokenErrorResponse extends ApiResponse {
   private instruction = 'refresh_token';
 
   constructor(message = 'Access token invalid') {
-    super(StatusCode.INVALID_ACCESS_TOKEN, ResponseStatus.UNAUTHORIZED, message);
+    super(false, ResponseStatus.UNAUTHORIZED, message);
   }
 
   send(res: Response): Response {
@@ -137,7 +137,7 @@ export class AccessTokenErrorResponse extends ApiResponse {
 
 export class TokenRefreshResponse extends ApiResponse {
   constructor(message: string, private accessToken: string, private refreshToken: string) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message);
+    super(true, ResponseStatus.SUCCESS, message);
   }
 
   send(res: Response): Response {
