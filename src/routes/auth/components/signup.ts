@@ -1,14 +1,14 @@
 import express, { Request, Response } from 'express';
 import _ from 'lodash';
-import { BadRequestError } from '../../core/ApiError';
-import User from '../../database/models/User';
-import UserRepo from '../../database/repository/UserRepo';
-import asyncHandler from '../../helpers/asyncHandler';
-import { Role } from '../../database/models/User';
-import { createToken } from '../../auth/authUtils';
-import { SuccessResponse } from '../../core/ApiResponse';
-import validation from '../../helpers/validator';
-import schema from './schema';
+import { BadRequestError } from '../../../core/ApiError';
+import User from '../../../database/models/User';
+import UserRepo from '../../../database/repository/UserRepo';
+import asyncHandler from '../../../helpers/asyncHandler';
+import { Role } from '../../../database/models/User';
+import { createToken } from '../../../auth/authUtils';
+import { SuccessResponse } from '../../../core/ApiResponse';
+import validation from '../../../helpers/validator';
+import schema from '../schema';
 
 const router = express.Router();
 

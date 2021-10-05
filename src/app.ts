@@ -37,7 +37,7 @@ const openapiSpec = swaggerJsDoc(options);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: '10mb', parameterLimit: 50000 }));
-app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }))
+app.use(cors())
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openapiSpec));
 
 app.use('/', routes);

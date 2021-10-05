@@ -6,13 +6,12 @@ const dbURI = `mongodb${dbConfig.dnsSrv ? '+srv' : ''}://${dbConfig.user}:${enco
 
 const options = {
   useNewUrlParser: true,
-  useCreateIndex: true,
   useUnifiedTopology: true,
 }
 
 
 mongoose
-  .connect(dbURI, options)
+  .connect(dbURI)
   .then((db) => Logger.info("DB connected"))
   .catch(e => {
     console.log('error connecting: ', e);

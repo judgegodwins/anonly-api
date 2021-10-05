@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import { Schema, isValidObjectId, Types } from "mongoose";
 import Pagination, { PaginationFunction } from "../../helpers/Pagination";
 import Message, { MessageModel } from '../models/Message';
 import User, { UserModel } from '../models/User';
@@ -23,9 +23,9 @@ export default class MessageRepo {
   /**
    * Finds the messages sent to a user
    */
-  public static findMessagesForUserWithId(id: ObjectId): Pagination<Message> {
+  public static findMessagesForUserWithId(id: Schema.Types.ObjectId | Types.ObjectId): Pagination<Message> {
 
-    const query = MessageModel.find({user: id})
+    const query = MessageModel.find({user: id as Schema.Types.ObjectId})
 
     // const count = await MessageModel.countDocuments(query);
     return new Pagination<Message>(query);

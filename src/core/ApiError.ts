@@ -86,7 +86,7 @@ export class ForbiddenError extends ApiError {
 }
 
 export class NoEntryError extends ApiError {
-  constructor(message = "Entry don't exists") {
+  constructor(message = "Entry doesn't exist") {
     super(ErrorType.NO_ENTRY, message);
   }
 }

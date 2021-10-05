@@ -1,4 +1,4 @@
-import { Document, Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import bcrypt from 'bcrypt';
 import Message from './Message';
 
@@ -6,7 +6,7 @@ export const DOCUMENT_NAME = 'User';
 export const COLLECTION_NAME = 'users';
 
 export default interface User {
-  _id: Schema.Types.ObjectId
+  _id: Types.ObjectId
   username: string;
   email?: string;
   password: string;
@@ -51,7 +51,7 @@ const schema = new Schema<User>(
           enum: [Role.User, Role.Admin]
         }
       ],
-      default: Role.User,
+      default: [Role.User],
       required: true
     },
     messages: {

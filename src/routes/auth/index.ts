@@ -1,6 +1,7 @@
 import express from 'express';
-import signup from './signup';
-import login from './login';
+import signup from './components/signup';
+import login from './components/login';
+import verification from './components/verification';
 
 const router = express.Router();
 
@@ -66,5 +67,6 @@ const router = express.Router();
 
 router.use('/signup', signup);
 router.use('/login', login)
+router.use('/verification', verification)
 
 export default router;

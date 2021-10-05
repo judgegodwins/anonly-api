@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { MessageModel } from '../../database/models/Message';
-import User, { UserModel } from '../../database/models/User';
+
 import _ from 'lodash';
 import { ProtectedRequest } from 'app-request';
 import UserRepo from '../../database/repository/UserRepo';

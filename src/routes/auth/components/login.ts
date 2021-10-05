@@ -1,14 +1,14 @@
 import express, { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import _ from 'lodash';
-import schema from './schema';
-import User from '../../database/models/User';
-import UserRepo from '../../database/repository/UserRepo';
-import { SuccessResponse } from '../../core/ApiResponse';
-import asyncHandler from '../../helpers/asyncHandler';
-import { createToken } from '../../auth/authUtils';
-import { BadRequestError, NotFoundError } from '../../core/ApiError';
-import validator from '../../helpers/validator';
+import schema from '../schema';
+import User from '../../../database/models/User';
+import UserRepo from '../../../database/repository/UserRepo';
+import { SuccessResponse } from '../../../core/ApiResponse';
+import asyncHandler from '../../../helpers/asyncHandler';
+import { createToken } from '../../../auth/authUtils';
+import { AuthFailureError, BadRequestError, NotFoundError } from '../../../core/ApiError';
+import validator from '../../../helpers/validator';
 
 const router = express.Router();
 
@@ -77,11 +77,11 @@ router.post(
   asyncHandler(async (req: Request, res: Response) => {
     const user = await UserRepo.findUserByUsername(req.body.username);
 
-    if (!user) throw new NotFoundError('User not found');
+    if (!user) throw new AuthFailureError('Invalid username or password');
 
     const same = await bcrypt.compare(req.body.password, user.password);
 
-    if (!same) throw new BadRequestError('Invalid username or password')
+    if (!same) throw new AuthFailureError('Invalid username or password')
 
     const tokenDetails = createToken(user);
 
