@@ -9,6 +9,7 @@ const options = {
   useUnifiedTopology: true,
 }
 
+console.log(dbURI);
 
 mongoose
   .connect(dbURI)
