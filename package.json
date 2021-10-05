@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && npm run serve",
+    "start": "npm run serve",
     "postinstall": "npm run clean && npm run build-ts",
     "serve": "node -r dotenv/config build/server.js",
     "build": "npm run clean && npm run build-ts",
