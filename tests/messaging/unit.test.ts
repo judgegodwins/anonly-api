@@ -14,19 +14,29 @@ describe('Messaging', () => {
 
 
   describe('Send message route /message/:username', () => {
-    const endpoint = `/message/${mockUser.username}`;
+    const endpoint = '/message/new';
 
     it('Should respond with 400 error if text field is not sent', async () => {
       const response = await addHeader(
-        request.post(endpoint).send({})
+        request.post(endpoint).query({ user: mockUser.username }).send({})
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toContain("body");
+    });
+
+    it('Should respond with 400 error if username is not sent in query', async () => {
+      const response = await addHeader(
+        request.post(endpoint).query({}).send({text: 'Hello user'})
       );
 
       expect(response.status).toBe(400)
+      expect(response.body.message).toContain("query")
     });
 
     it('Should return 404 if user with username is not found', async () => {
       const response = await addHeader(
-        request.post('/message/unknowntester').send({
+        request.post('/message/new').query({ user: 'unknowntester' }).send({
           text: 'Hello unknowntester!'
         })
       );

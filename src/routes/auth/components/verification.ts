@@ -67,7 +67,6 @@ router.get(
     
     const newId = await VerificationRepo.resetLookupId(req.user._id);
 
-    console.log('new id: ', newId)
     const response = await sendVerificationEmail(details.proposedEmail, req.user._id, newId);
 
     new SuccessMsgResponse("Verification email resent")
@@ -86,12 +85,10 @@ router.put(
     const userIdAsObjectId = new Types.ObjectId(userId as string)
     const details = await VerificationRepo.findVerificationDetails(userIdAsObjectId)
 
-    console.log('details: ', details);
     if (!details) throw new AuthFailureError();
 
     const valid = await bcrypt.compare(lookupId as string, details.lookupId);
 
-    console.log('valid: ', valid)
     if (!valid) throw new AuthFailureError();
 
     const updatedUser = await UserRepo.addVerifiedEmail(userIdAsObjectId, details.proposedEmail);

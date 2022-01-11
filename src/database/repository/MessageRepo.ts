@@ -1,11 +1,11 @@
 import { Schema, isValidObjectId, Types } from "mongoose";
 import Pagination, { PaginationFunction } from "../../helpers/Pagination";
-import Message, { MessageModel } from '../models/Message';
-import User, { UserModel } from '../models/User';
+import Message, { MessageModel } from "../models/Message";
+import User, { UserModel } from "../models/User";
 
 interface PaginationOptions {
-  limit: number,
-  page: number
+  limit: number;
+  page: number;
 }
 
 export default class MessageRepo {
@@ -23,9 +23,10 @@ export default class MessageRepo {
   /**
    * Finds the messages sent to a user
    */
-  public static findMessagesForUserWithId(id: Schema.Types.ObjectId | Types.ObjectId): Pagination<Message> {
-
-    const query = MessageModel.find({user: id as Schema.Types.ObjectId})
+  public static findMessagesForUserWithId(
+    id: Types.ObjectId | string
+  ): Pagination<Message> {
+    const query = MessageModel.find({ user: id });
 
     // const count = await MessageModel.countDocuments(query);
     return new Pagination<Message>(query);

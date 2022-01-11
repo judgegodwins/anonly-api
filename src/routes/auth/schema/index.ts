@@ -5,7 +5,7 @@ export default {
   signup: Joi.object({
     username: Joi.string().required().min(5),
     email: Joi.string().optional().email(),
-    password: Joi.string().required().min(6),
+    password: Joi.string().required().min(8),
   }),
   login: Joi.object({
     username: Joi.string().required(),

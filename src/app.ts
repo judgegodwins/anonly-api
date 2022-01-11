@@ -12,7 +12,6 @@ import swaggerJsDoc from 'swagger-jsdoc';
 
 
 process.on('uncaughtException', (e) => {
-  console.log(e, 'about to log yo')
   Logger.error(e);
 });
 

@@ -31,7 +31,7 @@ const router = express.Router();
  *          type: string
  *          example: Hi awesomeuser, you're so cool.
  *      required:
- *        - text   
+ *        - text
  */
 
 /**
@@ -85,13 +85,13 @@ const router = express.Router();
  */
 
 router.post(
-  '/:username',
+  '/new',
+  validator(schema.sendMessage.query, ValidationSource.Query),
   validator(schema.sendMessage.body, ValidationSource.Body),
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const { username } = req.params;
     const { text } = req.body;
 
-    const user = await UserRepo.findUserByUsername(username)
+    const user = await UserRepo.findUserByUsername(req.query.user as string)
 
     if (!user) throw new NotFoundError("User with username not found")
 

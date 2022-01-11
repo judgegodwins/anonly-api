@@ -4,6 +4,8 @@ import User, { Role, UserModel } from '../models/User';
 
 export default class UserRepo {
   public static async create(user: User): Promise<User> {
+    if (!user.email) delete user.email;
+    
     const createdUser = await UserModel.create(user);
 
     return createdUser.toObject();

@@ -2,8 +2,8 @@ import Joi from 'joi';
 
 export default {
   sendMessage: {
-    params: Joi.object({
-      username: Joi.string().required()
+    query: Joi.object({
+      user: Joi.string().required()
     }),
     body: Joi.object({
       text: Joi.string().required()

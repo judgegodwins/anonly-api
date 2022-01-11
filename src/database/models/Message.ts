@@ -1,11 +1,11 @@
-import { Document, Schema, model, Query, Model } from "mongoose";
+import { Types, Document, Schema, model, Query, Model } from "mongoose";
 
 export const DOCUMENT_NAME = 'Message';
 export const COLLECTION_NAME = 'messages';
 
 export default interface Message {
   text: string;
-  user: Schema.Types.ObjectId,
+  user: Types.ObjectId,
   createdAt: Date;
   updatedAt: Date;
 }
