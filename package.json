@@ -5,14 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run serve",
-    "postinstall": "npm run clean && npm run build-ts",
     "serve": "node -r dotenv/config build/server.js",
     "build": "npm run clean && npm run build-ts",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
     "clean": "rimraf ./build",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
-    "watch-node": " nodemon -r dotenv/config build/server.js",
+    "watch-node": "nodemon -r dotenv/config build/server.js",
     "test": "jest --detectOpenHandles"
   },
   "keywords": [],
