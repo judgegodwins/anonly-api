@@ -1,8 +1,8 @@
 import Logger from "../core/Logger";
-import { dbConfig, dbUrl } from "../config";
+import { dbConfig, dbUrI } from "../config";
 import mongoose from 'mongoose';
 
-const dbURI = dbUrl || `mongodb${dbConfig.dnsSrv ? '+srv' : ''}://${dbConfig.user}:${encodeURIComponent(dbConfig.password)}@${dbConfig.host}${dbConfig.port ? ':'+dbConfig.port : ''}/${dbConfig.name}${dbConfig.options}`;
+const dbURI = dbUrI || `mongodb${dbConfig.dnsSrv ? '+srv' : ''}://${dbConfig.user}:${encodeURIComponent(dbConfig.password)}@${dbConfig.host}${dbConfig.port ? ':'+dbConfig.port : ''}/${dbConfig.name}${dbConfig.options}`;
 
 const options = {
   useNewUrlParser: true,
