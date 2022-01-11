@@ -11,6 +11,8 @@ export const port: number | string = process.env.PORT || 8080;
 
 export const jwtSecret = process.env.JWT_SECRET;
 
+export const dbUrl = process.env.DB_URL;
+
 const dbOptions: { [optionKey: string]: string | undefined } = {}
 
 Object.keys(process.env).forEach((key) => {
