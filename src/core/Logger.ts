@@ -1,42 +1,39 @@
-import { createLogger, transports, format } from 'winston';
-import fs from 'fs';
-import path from 'path';
-import DailyRotateFile from 'winston-daily-rotate-file';
-import { environment, logDirectory } from '../config';
-let dir = logDirectory;
-if (!dir) dir = path.resolve('logs');
-// create directory if it is not present
-if (!fs.existsSync(dir)) {
-  // Create the directory if it does not exist
-  fs.mkdirSync(dir);
-}
+import { createLogger, format, transports } from 'winston';
+import { consoleFormat } from 'winston-console-format';
+import config, { AppEnvironmentEnum } from '../config';
 
-const logLevel = environment === 'development' ? 'debug' : 'warn';
+const { TEST, LOCAL } = AppEnvironmentEnum;
 
-const options = {
-  file: {
-    level: logLevel,
-    filename: dir + '/%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    timestamp: true,
+const consoleTransportOptions = [TEST, LOCAL].includes(config.app.env)
+  ? {
     handleExceptions: true,
-    humanReadableUnhandledException: true,
-    prettyPrint: true,
-    json: true,
-    maxSize: '20m',
-    colorize: true,
-    maxFiles: '14d',
-  },
-};
+    format: format.combine(
+      format.colorize({ all: true }),
+      format.padLevels(),
+      consoleFormat({
+        showMeta: true,
+        inspectOptions: {
+          depth: Infinity,
+          colors: true,
+          maxArrayLength: Infinity,
+          breakLength: 120,
+          compact: Infinity,
+        },
+      }),
+    ),
+  }
+  : { handleExceptions: true };
 
-export default createLogger({
-  transports: [
-    new transports.Console({
-      level: logLevel,
-      format: format.combine(format.errors({ stack: true }), format.prettyPrint()),
-    }),
-  ],
-  exceptionHandlers: [new DailyRotateFile(options.file)],
-  exitOnError: false, // do not exit on handled exceptions
+const createComponentLogger = (component: string) => createLogger({
+  level: 'debug',
+  format: format.combine(format.timestamp({ format: () => new Date().toLocaleString() }), format.errors({ stack: true }), format.splat(), format.json()),
+  defaultMeta: { component },
+  transports: [new transports.Console(consoleTransportOptions)],
 });
+
+export const generalLogger = createComponentLogger('GENERAL');
+export const routesLogger = createComponentLogger('ROUTES');
+export const errorLogger = createComponentLogger('ERROR');
+export const scriptLogger = createComponentLogger('SCRIPT');
+
+export default generalLogger;

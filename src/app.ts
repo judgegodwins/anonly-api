@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import path from 'path';
 import Logger from './core/Logger';
-import { corsUrl, environment } from './config';
+import config from './config';
 import './database';
 import { ApiError, InternalError, NotFoundError } from './core/ApiError';
 import routes from './routes';
@@ -37,6 +37,11 @@ const openapiSpec = swaggerJsDoc(options);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: '10mb', parameterLimit: 50000 }));
 app.use(cors())
+app.get('/test', async (req, res) => {
+	const t = await new Promise((resolve, reject) => setTimeout(() => resolve('OK'), 20000));
+	res.json({data: t});
+});
+
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openapiSpec));
 
 app.use('/', routes);
@@ -48,7 +53,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     ApiError.handle(err, res);
   } else {
     console.log('error: ', err);
-    if (environment == 'development') {
+    if (config.env.isDevelopment) {
       Logger.error(err)
       return res.status(500).send(err.message);
     }

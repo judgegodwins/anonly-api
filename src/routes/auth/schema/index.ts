@@ -1,9 +1,8 @@
 import Joi from 'joi';
-import { isValidObjectId } from 'mongoose';
 
 export default {
   signup: Joi.object({
-    username: Joi.string().required().min(5),
+    username: Joi.string().required().min(5).max(20),
     email: Joi.string().optional().email(),
     password: Joi.string().required().min(8),
   }),
@@ -16,12 +15,6 @@ export default {
       email: Joi.string().required().email()
     }),
     verify: Joi.object({
-      userId: Joi.custom((value: string, helpers) => {
-        if (!isValidObjectId(value)) 
-          return helpers.error('any.invalid')
-        
-        return value;
-      }),
       id: Joi.string().required()
     })
   }

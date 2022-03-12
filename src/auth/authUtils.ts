@@ -1,4 +1,4 @@
-import { jwtSecret } from '../config';
+import config from '../config';
 import User from '../database/models/User';
 import jwt, { Secret } from 'jsonwebtoken';
 import { AuthFailureError } from '../core/ApiError';
@@ -9,7 +9,7 @@ export const createToken = (user: User): { accessToken: string, expiresOn: strin
 
   const accessToken = jwt.sign(
     _.pick(user, ["_id", "username", "email", "roles", "verified"]),
-    jwtSecret as Secret,
+    config.app.jwtSecret as Secret,
     { expiresIn: '10d' }
   )
 

@@ -1,104 +1,118 @@
-import express, { NextFunction, Request, Response } from 'express';
-import _ from 'lodash';
-import { Types } from 'mongoose';
-import bcrypt from 'bcrypt';
-import { ProtectedRequest } from 'app-request';
-import validator, { ValidationSource } from '../../../helpers/validator';
-import { AuthFailureError, BadRequestError, InternalError } from '../../../core/ApiError';
-import VerificationRepo from '../../../database/repository/VerificationRepo';
-import asyncHandler from '../../../helpers/asyncHandler';
-import UserRepo from '../../../database/repository/UserRepo';
-import { SuccessResponse, SuccessMsgResponse } from '../../../core/ApiResponse';
-import schema from '../schema';
-import authentication from '../../../auth/authentication';
-import sendEmail from '../../../helpers/sendEmail';
-
+import express, { NextFunction, Request, Response } from "express";
+import _ from "lodash";
+import { Types } from "mongoose";
+import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from "uuid";
+import { ProtectedRequest } from "app-request";
+import redis from "../../../database/redis";
+import validator, { ValidationSource } from "../../../helpers/validator";
+import {
+  AuthFailureError,
+  BadRequestError,
+  InternalError,
+  NotFoundError,
+} from "../../../core/ApiError";
+import asyncHandler from "../../../helpers/asyncHandler";
+import UserRepo from "../../../database/repository/UserRepo";
+import { SuccessMsgResponse } from "../../../core/ApiResponse";
+import schema from "../schema";
+import authentication from "../../../auth/authentication";
+import sendVerificationEmail from "../../../helpers/sendVerificationEmail";
+import { bcryptHash } from "../../../helpers";
 
 const router = express.Router();
 
-const sendVerificationEmail = (email: string, userId: Types.ObjectId, lookupId: string) => {
-  if (!process.env.CLIENT_URL) 
-    return Promise.reject(new Error("Client URL not specified"));
-
-  const link = `${process.env.CLIENT_URL}/${userId}/${lookupId}`
-
-  return sendEmail({
-    from: "Anonly <mailgun@sandbox18ed15bccce24869a3391d51ced7d77a.mailgun.org>",
-    to: [email],
-    subject: "Verify your email",
-    html: `<p>Use the link to verify your email 
-      <a href=${link}>${link}</a>
-    </p>`
-  })
-}
-
 router.post(
-  '/request',
+  "/request",
   authentication,
   validator(schema.verification.request),
-  asyncHandler(async (req: ProtectedRequest, res: Response, next: NextFunction) => {
-    const { email }: { email: string } = req.body;
+  asyncHandler(
+    async (req: ProtectedRequest, res: Response, next: NextFunction) => {
+      const { email }: { email: string } = req.body;
 
-    const pending = await VerificationRepo.findVerificationDetails(req.user._id);
-    const emailExists = await UserRepo.findUserByEmail(email);
-    const emailPending = await VerificationRepo.findWithEmail(email);
+      const emailExists = await UserRepo.findUserByEmail(email);
 
-    if (pending) throw new BadRequestError('Email action already pending');
-    if (emailExists || emailPending) throw new BadRequestError('Email already in use');
+      if (emailExists) throw new BadRequestError("Email already in use");
 
-    const lookupId = await VerificationRepo.createDetails(req.user._id, email);
+      const user = await UserRepo.findUserById(req.user._id);
 
-    const response = await sendVerificationEmail(email, req.user._id, lookupId);
+      if (!user) throw new NotFoundError("User not found");
 
-    if (response)
-      new SuccessMsgResponse("Verification email sent")
-        .send(res);
-  })
-)
+      if (user.email && user.verified)
+        throw new BadRequestError("Email already verified");
+
+      const lookupId = uuidv4();
+
+      await redis.set(
+        `verification:email:${user._id}`,
+        JSON.stringify({ email, lookupId: await bcryptHash(lookupId) }),
+        { EX: 30 * 60 }
+      );
+
+      const response = await sendVerificationEmail(email, user._id, lookupId);
+
+      if (response) new SuccessMsgResponse("Verification email sent").send(res);
+    }
+  )
+);
 
 router.get(
-  '/resend',
+  "/resend",
   authentication,
   asyncHandler(async (req: ProtectedRequest, res: Response) => {
+    const user = await UserRepo.findUserById(req.user._id);
+    if (!user) throw new BadRequestError("User not found");
 
-    const details = await VerificationRepo.findVerificationDetails(req.user._id);
-    
-    if (!details) return new BadRequestError("Details not found");
-    
-    const newId = await VerificationRepo.resetLookupId(req.user._id);
+    const { email }: { email: string } = req.body;
 
-    const response = await sendVerificationEmail(details.proposedEmail, req.user._id, newId);
+    const prev = await redis.get(`verification:email:${user._id}`);
 
-    new SuccessMsgResponse("Verification email resent")
-      .send(res);
+    if (!prev) throw new BadRequestError("Details not found");
 
+    const lookupId = await uuidv4();
+
+    await redis.set(
+      `verification:email:${user._id}`,
+      JSON.stringify({
+        email: req.body.email as string,
+        lookupId: await bcryptHash(lookupId),
+      }),
+      { EX: 30 * 60 }
+    );
+
+    await sendVerificationEmail(email, user._id, lookupId);
+
+    new SuccessMsgResponse("Verification email resent").send(res);
   })
-)
+);
 
 router.put(
-  '/verify',
+  "/verify",
+  authentication,
   validator(schema.verification.verify, ValidationSource.Query),
-  asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.query.userId;
-    const lookupId = req.query.id;
+  asyncHandler(async (req: ProtectedRequest, res: Response) => {
+    const lookupId = req.query.id as string;
 
-    const userIdAsObjectId = new Types.ObjectId(userId as string)
-    const details = await VerificationRepo.findVerificationDetails(userIdAsObjectId)
+    const details = await redis.get(`verification:email:${req.user._id}`);
 
-    if (!details) throw new AuthFailureError();
+    if (!details) throw new AuthFailureError("Cannot verify email");
 
-    const valid = await bcrypt.compare(lookupId as string, details.lookupId);
+    const parsedDetails: { email: string; lookupId: string } =
+      JSON.parse(details);
 
-    if (!valid) throw new AuthFailureError();
+    const idsMatch = await bcrypt.compare(lookupId, parsedDetails.lookupId);
 
-    const updatedUser = await UserRepo.addVerifiedEmail(userIdAsObjectId, details.proposedEmail);
+    if (!idsMatch) throw new AuthFailureError("Cannot verify email");
 
-    await VerificationRepo.delete(userIdAsObjectId);
+    await UserRepo.addVerifiedEmail(
+      req.user._id,
+      parsedDetails.email,
+    );
 
-    new SuccessResponse("User verified", {
-      user: _.pick(updatedUser, ['_id', 'username', 'email', 'roles', 'verified'])
-    }).send(res);
+    await redis.del(`verification:email:${req.user._id}`)
+
+    new SuccessMsgResponse("User verified").send(res);
   })
-)
+);
 
 export default router;

@@ -1,37 +1,45 @@
 import Logger from "../core/Logger";
-import { dbConfig, dbUrI } from "../config";
-import mongoose from 'mongoose';
+import config from "../config";
+import mongoose from "mongoose";
 
-const dbURI = dbUrI || `mongodb${dbConfig.dnsSrv ? '+srv' : ''}://${dbConfig.user}:${encodeURIComponent(dbConfig.password)}@${dbConfig.host}${dbConfig.port ? ':'+dbConfig.port : ''}/${dbConfig.name}${dbConfig.options}`;
+const {
+  db: {
+    dbUri,
+    dnsSrv,
+    user,
+    password,
+    host,
+    port,
+    name,
+    options: dbUriOptions,
+  },
+} = config;
+
+const dbURI =
+  dbUri ||
+  `mongodb${dnsSrv ? "+srv" : ""}://${user}:${encodeURIComponent(
+    password
+  )}@${host}${port ? ":" + port : ""}/${name}${dbUriOptions}`;
 
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}
+};
 
-mongoose
-  .connect(dbURI)
-  .then((db) => Logger.info("DB connected"))
-  .catch(e => {
-    console.log('error connecting: ', e);
-    Logger.info("Mongoose connection error");
-    Logger.error(e);
-  })
+export const createConnection = async () => {
+  await mongoose.connect(dbURI).then(() => Logger.info("MongoDB connected"));
 
-// If the connection throws an error
-mongoose.connection.on('error', (err) => {
-  Logger.error('Mongoose default connection error: ' + err);
-});
-
-// When the connection is disconnected
-mongoose.connection.on('disconnected', () => {
-  Logger.info('Mongoose default connection disconnected');
-});
-
-// If the Node process ends, close the Mongoose connection
-process.on('SIGINT', () => {
-  mongoose.connection.close(() => {
-    Logger.info('Mongoose default connection disconnected through app termination');
-    process.exit(0);
+  // If the connection throws an error
+  mongoose.connection.on("error", (err) => {
+    Logger.error("Mongoose default connection error: " + err);
   });
-});
+
+  // When the connection is disconnected
+  mongoose.connection.on("disconnected", () => {
+    Logger.info("Mongoose default connection disconnected");
+  });
+
+  return mongoose.connection;
+};
+
+export default mongoose.connection;

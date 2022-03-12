@@ -1,16 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import express from "express";
 import jwt, { Secret } from "jsonwebtoken";
-// import { ProtectedRequest } from "app-request";
+import { Types } from "mongoose";
+import { ProtectedRequest } from "app-request";
 import asyncHandler from "../helpers/asyncHandler";
 import { getAccessToken } from "./authUtils";
-import { jwtSecret } from "../config";
-import UserRepo from "../database/repository/UserRepo";
+import config from "../config";
+// import UserRepo from "../database/repository/UserRepo";
 import User from "../database/models/User";
 import { AuthFailureError, InternalError } from "../core/ApiError";
-import schema from "./schema";
-import validator, { ValidationSource } from "../helpers/validator";
-import { ProtectedRequest } from "app-request";
 
 const router = express.Router();
 
@@ -20,17 +18,18 @@ export default [
     async (req: ProtectedRequest, res: Response, next: NextFunction) => {
       const token = getAccessToken(req.headers.authorization);
 
-      console.log("token sent: ", token);
-      jwt.verify(token, jwtSecret as Secret, async (err, decoded: User) => {
+      jwt.verify(token, config.app.jwtSecret as Secret, async (err, decoded: User) => {
         if (err) next(new AuthFailureError(err.message));
 
         if (!decoded) return next(new AuthFailureError("Invalid token"));
 
-        const user = await UserRepo.findUserByUsername(decoded.username);
+        // const user = await UserRepo.findUserByUsername(decoded.username);
 
-        if (!user) return next(new AuthFailureError("Invalid token"));
+        // if (!user) return next(new AuthFailureError("Invalid token"));
 
         req.user = decoded;
+
+        req.user._id = new Types.ObjectId(req.user._id)
 
         next();
       });

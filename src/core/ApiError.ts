@@ -1,4 +1,4 @@
-import { environment } from "../config";
+import config from "../config";
 import { Response } from 'express';
 import {
   AuthFailureResponse,
@@ -48,7 +48,7 @@ export abstract class ApiError extends Error {
       default: {
         let message = err.message;
         // Do not send failure message in production as it may send sensitive data
-        if (environment === 'production') message = 'Something wrong happened.';
+        if (config.env.isProduction) message = 'Something wrong happened.';
         return new InternalErrorResponse(message).send(res);
       }
     }

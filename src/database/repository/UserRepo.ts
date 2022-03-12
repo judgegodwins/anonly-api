@@ -36,4 +36,10 @@ export default class UserRepo {
       .exec();
   }
 
+  public static findUserById(id: string | Types.ObjectId): Promise<User | null> {
+    return UserModel.findById(id)
+      .lean<User>()
+      .exec();
+  }
+
 }
