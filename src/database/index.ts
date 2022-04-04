@@ -2,32 +2,13 @@ import Logger from "../core/Logger";
 import config from "../config";
 import mongoose from "mongoose";
 
-const {
-  db: {
-    dbUri,
-    dnsSrv,
-    user,
-    password,
-    host,
-    port,
-    name,
-    options: dbUriOptions,
-  },
-} = config;
-
-const dbURI =
-  dbUri ||
-  `mongodb${dnsSrv ? "+srv" : ""}://${user}:${encodeURIComponent(
-    password
-  )}@${host}${port ? ":" + port : ""}/${name}${dbUriOptions}`;
-
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
 
 export const createConnection = async () => {
-  await mongoose.connect(dbURI).then(() => Logger.info("MongoDB connected"));
+  await mongoose.connect(config.db.uri).then(() => Logger.info("MongoDB connected"));
 
   // If the connection throws an error
   mongoose.connection.on("error", (err) => {

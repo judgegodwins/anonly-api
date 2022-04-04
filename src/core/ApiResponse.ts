@@ -70,17 +70,19 @@ export class SuccessResponse<T> extends ApiResponse {
 }
 
 //for pagination. guide will return pagination instructions, i.e next, prev
-export class PaginationResponse extends ApiResponse {
-  private next: PaginationResult["next"];
-  private previous: PaginationResult["previous"];
-  private pagesNecessary: PaginationResult["pagesNecessary"];
-  private data: PaginationResult["data"];
+export class PaginationResponse<T> extends ApiResponse {
+  private next: PaginationResult<T>["next"];
+  private previous: PaginationResult<T>["previous"];
+  private pagesNecessary: PaginationResult<T>["pagesNecessary"];
+  private data: PaginationResult<T>["data"];
+  private count: PaginationResult<T>["count"];
 
-  constructor(message: string, result: PaginationResult) {
+  constructor(message: string, result: PaginationResult<T>) {
     super(true, ResponseStatus.SUCCESS, message);
     this.next = result.next;
     this.previous = result.previous;
     this.pagesNecessary = result.pagesNecessary;
+    this.count = result.count;
     this.data = result.data;
   }
 }

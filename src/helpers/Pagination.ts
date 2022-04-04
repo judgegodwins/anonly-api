@@ -1,10 +1,11 @@
 import { Query, Document } from "mongoose";
 import { Request, Response } from 'express';
-import { MessageModel } from "../database/models/Message";
+// import { MessageModel } from "../database/models/Message";
 
-export interface PaginationResult {
-  data: any;
-  pagesNecessary: number;
+export interface PaginationResult<T> {
+  data: T;
+  pagesNecessary?: number;
+  count?: number;
   next?: {
     page: number;
     limit: number;
@@ -15,11 +16,9 @@ export interface PaginationResult {
   }
 }
 
-export type PaginationFunction = <RequestType extends Request>(req: RequestType, res: Response) => Promise<PaginationResult>
+export default class Pagination<T, DataType = any> {
 
-export default class Pagination<T> {
-
-  constructor (private query: Query<any, Document<T>>){}
+  constructor (private query: Query<any, Document<any, any, T>>){}
 
   public async paginate<RequestType extends Request>(req: RequestType, res: Response) {
     const page = parseInt(req.query.page as string);
@@ -28,13 +27,14 @@ export default class Pagination<T> {
     const startIndex = (page - 1) * limit;
     const endIndex = limit * page;
 
-    const docCount = await MessageModel.countDocuments(this.query);
+    const docCount = await this.query.model.countDocuments(this.query);
 
-    const result: PaginationResult = {} as PaginationResult;
+    const result: PaginationResult<DataType> = {} as PaginationResult<DataType>;
 
+    result.count = docCount;
     result.pagesNecessary = Math.ceil(docCount / limit);
 
-    result.data = await this.query.skip(startIndex).limit(limit).lean<T>();
+    result.data = await this.query.skip(startIndex).limit(limit);
 
     if (endIndex < docCount) {
       result.next = {

@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 export default {
   signup: Joi.object({
@@ -8,14 +8,19 @@ export default {
   }),
   login: Joi.object({
     username: Joi.string().required(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
   }),
   verification: {
-    request: Joi.object({
-      email: Joi.string().required().email()
-    }),
+    request: {
+      body: Joi.object({
+        email: Joi.string().required().email(),
+      }),
+      query: Joi.object({
+        updateEmail: Joi.bool().optional(),
+      })
+    },
     verify: Joi.object({
-      id: Joi.string().required()
-    })
-  }
-}
+      code: Joi.string().required(),
+    }),
+  },
+};

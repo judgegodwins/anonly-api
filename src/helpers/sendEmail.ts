@@ -15,10 +15,5 @@ interface Data {
 }
 
 export default (data: Data) => {
-  if (!process.env.MAILGUN_DOMAIN) {
-    return Promise.reject(new Error('Mailgun domain not set'))
-  }
-
-  console.log('Outside if')
   return mg.messages.create(process.env.MAILGUN_DOMAIN as string, data)
 }

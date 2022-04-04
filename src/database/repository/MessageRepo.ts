@@ -1,5 +1,5 @@
 import { Schema, isValidObjectId, Types } from "mongoose";
-import Pagination, { PaginationFunction } from "../../helpers/Pagination";
+import Pagination from "../../helpers/Pagination";
 import Message, { MessageModel } from "../models/Message";
 import User, { UserModel } from "../models/User";
 
@@ -29,6 +29,6 @@ export default class MessageRepo {
     const query = MessageModel.find({ user: id });
 
     // const count = await MessageModel.countDocuments(query);
-    return new Pagination<Message>(query);
+    return new Pagination<Message, Message[]>(query);
   }
 }
