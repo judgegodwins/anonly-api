@@ -14,8 +14,6 @@ const startServer = async () => {
 
   validateConfig();
 
-  generalLogger.info(process.env.NODE_ENV);
-
   const { dbConnection, redisConnection } = await initialize();
   const app = (await import("./app")).default;
   const server = stoppable(http.createServer(app));
