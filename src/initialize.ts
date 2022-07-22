@@ -7,7 +7,7 @@ export default async () => {
 
   // await utils.createSuperAdmin(); // RUN ONLY ONCE
 
-  // const app = (await import("./app")).default;
+  const app = (await import("./app")).default;
   // const router = (await import("./routes")).default;
 
   // app.use(router);
@@ -17,5 +17,6 @@ export default async () => {
   return {
     redisConnection,
     dbConnection,
+    app,
   };
 };
