@@ -1,7 +1,7 @@
 import http from "http";
 import stoppable from "stoppable";
+import config from "./config";
 import { generalLogger, errorLogger } from "./core/Logger";
-import config, { validateConfig } from "./config";
 import initialize from "./initialize";
 
 global.server = {
@@ -11,8 +11,6 @@ global.server = {
 
 const startServer = async () => {
   global.server.isStartingUp = true;
-
-  validateConfig();
 
   const { dbConnection, redisConnection, app } = await initialize();
   const server = stoppable(http.createServer(app));

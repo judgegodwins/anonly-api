@@ -84,8 +84,6 @@ router.post(
       if (userWithEmail) throw new BadRequestError('User with email already exists');
     }
 
-    console.log(req.body.email);
-
     const createdUser = await UserRepo.create(
       {
         username: req.body.username,

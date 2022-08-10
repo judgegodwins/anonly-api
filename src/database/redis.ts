@@ -2,6 +2,8 @@ import { createClient } from "redis";
 import config from "../config";
 import Logger from "../core/Logger";
 
+console.log(config.redis.host, config.redis.password, config.redis.port)
+
 const redis = createClient({
   url: `redis://${config.redis.host}:${config.redis.port}`,
   password: config.redis.password,

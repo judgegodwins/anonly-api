@@ -51,4 +51,6 @@ export const validateConfig = () => {
   }
 };
 
+validateConfig();
+
 export default config;
