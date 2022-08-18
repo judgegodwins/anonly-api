@@ -76,12 +76,12 @@ router.post(
   validation(schema.signup),
   asyncHandler(async (req: Request, res: Response) => {
     const userWithUsername = await UserRepo.findUserByUsername(req.body.username);
-    if (userWithUsername) throw new BadRequestError('User with username already exists');
+    if (userWithUsername) throw new BadRequestError(`The username ${req.body.username} is unavailable`);
 
     if (req.body.email) {
       const userWithEmail = await UserRepo.findUserByEmail(req.body.email);
 
-      if (userWithEmail) throw new BadRequestError('User with email already exists');
+      if (userWithEmail) throw new BadRequestError('Email already in use');
     }
 
     const createdUser = await UserRepo.create(

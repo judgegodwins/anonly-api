@@ -2,6 +2,8 @@ import express from 'express';
 import signup from './components/signup';
 import login from './components/login';
 import verification from './components/verification';
+import profile from './components/profile';
+import updates from './components/updates';
 
 const router = express.Router();
 
@@ -68,5 +70,7 @@ const router = express.Router();
 router.use('/signup', signup);
 router.use('/login', login)
 router.use('/verification', verification)
+router.use('/update', updates);
+router.use('/profile', profile);
 
 export default router;

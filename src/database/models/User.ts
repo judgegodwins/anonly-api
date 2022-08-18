@@ -11,7 +11,7 @@ export default interface User {
   email?: string;
   password: string;
   verified: boolean;
-  messages?: Message[];
+  clientTheme?: string;
   roles: Role[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -21,6 +21,8 @@ export enum Role {
   User = 'USER',
   Admin = 'ADMIN'
 }
+
+export const sensitiveFields = ['password'];
 
 const schema = new Schema<User>(
   {
@@ -32,8 +34,8 @@ const schema = new Schema<User>(
     },
     email: {
       type: Schema.Types.String,
-      unique: true,
       trim: true,
+      index: { unique: true, sparse: true }
     },
     password: {
       type: Schema.Types.String,
@@ -42,7 +44,7 @@ const schema = new Schema<User>(
     verified: {
       type: Schema.Types.Boolean,
       required: true,
-      default: false
+      default: false  
     },
     roles: {
       type: [
@@ -54,9 +56,7 @@ const schema = new Schema<User>(
       default: [Role.User],
       required: true
     },
-    messages: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Message' }]
-    }
+    clientTheme: Schema.Types.String
   },
   {
     timestamps: true

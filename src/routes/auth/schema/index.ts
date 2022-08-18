@@ -23,4 +23,11 @@ export default {
       code: Joi.string().required(),
     }),
   },
+  updatePassword: Joi.object({
+    oldPassword: Joi.string().required(),
+    newPassword: Joi.string().min(8).required()
+  }),
+  updateTheme: Joi.object({
+    theme: Joi.string().required()
+  })
 };

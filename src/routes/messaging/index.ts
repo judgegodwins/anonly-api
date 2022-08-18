@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 
-import _ from 'lodash';
+import _, { pick } from 'lodash';
 import { ProtectedRequest } from 'app-request';
 import UserRepo from '../../database/repository/UserRepo';
 import asyncHandler from '../../helpers/asyncHandler';
@@ -111,7 +111,7 @@ router.get(
 
     if (!user) throw new NotFoundError('User not found');
     
-    return new SuccessResponse('User found', null).send(res);
+    return new SuccessResponse('User found', pick(user, ['username', 'clientTheme'])).send(res);
 
   })
 )

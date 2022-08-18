@@ -12,11 +12,6 @@ export default class MessageRepo {
   public static async create(text: string, user: User) {
     const message = await MessageModel.create({ text, user: user._id });
 
-    await UserModel.updateOne(
-      { username: user.username },
-      { $push: { messages: message._id } }
-    );
-
     return message.toObject<Message>();
   }
 

@@ -38,6 +38,7 @@ router.post(
 
       const emailExists = await UserRepo.findUserByEmail(email);
 
+      console.log('EMAIL EXISTS: ', emailExists);
       if (emailExists) throw new BadRequestError("Email already in use");
 
       const user = await UserRepo.findUserById(req.user._id);
@@ -76,7 +77,7 @@ router.get(
   authentication,
   asyncHandler(async (req: ProtectedRequest, res: Response) => {
     const user = await UserRepo.findUserById(req.user._id);
-    if (!user) throw new BadRequestError("User not found");
+    if (!user) throw new AuthFailureError("User not found");
 
     const prev = await redis.get(`verification:email:${user._id}`);
 

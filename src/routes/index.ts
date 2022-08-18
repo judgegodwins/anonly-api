@@ -1,6 +1,5 @@
 import express from 'express';
 import auth from './auth';
-import profile from './profile';
 import messaging from './messaging';
 
 const router = express.Router();
@@ -21,7 +20,6 @@ const router = express.Router();
  */
 
 router.use('/auth', auth);
-router.use('/profile', profile);
 router.use('/message', messaging);
 
 export default router;

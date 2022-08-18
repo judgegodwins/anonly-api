@@ -16,7 +16,11 @@ export default (schema: Joi.ObjectSchema, source = ValidationSource.Body) => (
   next: NextFunction
 ) => {
   // console.log('source: ', source);
-  const { error } = schema.validate(req[source]);
+  const { error, value } = schema.validate(req[source]);
+
+  console.log('VALUE: ', value);
+  console.log('bODY: ', req.body);
+  // req.body = value;
 
   if (!error) return next();
 
