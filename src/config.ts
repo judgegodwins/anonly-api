@@ -14,7 +14,7 @@ const config = {
     mode: process.env.REDIS_MODE! || "cluster",
     host: process.env.REDIS_HOST!,
     port: +process.env.REDIS_PORT!,
-    password: process.env.REDIS_PASSWORD!,
+    password: process.env.REDIS_PASSWORD,
   },
   env: {
     isProduction: process.env.NODE_ENV === AppEnvironmentEnum.PRODUCTION,
@@ -34,11 +34,14 @@ const config = {
   },
 };
 
-export const validateConfig = () => {
+export const validateConfig = (options?: { exceptions?: string[] }) => {
   const missingKeys: string[] = [];
   Object.entries(config).forEach(([baseKey, baseValue]) => {
     Object.entries(baseValue).forEach(([key, value]) => {
-      if (value === "" || value === undefined) {
+      if (
+        (value === "" || value === undefined) &&
+        !options?.exceptions?.includes(`${baseKey}.${key}`)
+      ) {
         missingKeys.push(`${baseKey}.${key}`);
       }
     });
@@ -51,6 +54,8 @@ export const validateConfig = () => {
   }
 };
 
-validateConfig();
+validateConfig({
+  exceptions: ["redis.password"],
+});
 
 export default config;
