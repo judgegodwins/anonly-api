@@ -5,9 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r dotenv/config build/server.js",
-    "build": "npm run clean && npm run build-ts",
+    "build": "rimraf ./build && tsc",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "clean": "rimraf ./build",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "watch-node": "nodemon -r dotenv/config build/server.js",
